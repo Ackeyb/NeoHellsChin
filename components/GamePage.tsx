@@ -1,11 +1,10 @@
 import MessageDialog from "@/components/MessageDialog";
-import PreloadDiceImages from "@/components/PreloadDiceImages";
+import DiceRoller from "@/components/game/DiceRoller";
 import GameActionButtons from "@/components/game/GameActionButtons";
 import GameEffects, { initialEffects, type EffectState } from "@/components/game/GameEffects";
 import GameHeader from "@/components/game/GameHeader";
 import GameSettingsStrip from "@/components/game/GameSettingsStrip";
 import PlayerList from "@/components/game/PlayerList";
-import ResultSelector from "@/components/game/ResultSelector";
 import useGameSounds from "@/hooks/useGameSounds";
 import { applyResult, createInitialGameState, getCurrentPlayer } from "@/lib/game/engine";
 import { labels } from "@/lib/game/labels";
@@ -93,11 +92,14 @@ export default function GamePage({ mode }: GamePageProps) {
 
   return (
     <main className={styles.gameShell}>
-      <PreloadDiceImages />
       <GameHeader mode={gameState.mode} round={gameState.round} cups={gameState.cups} />
       <PlayerList players={gameState.players} currentPlayerId={currentPlayer?.id} />
       <GameSettingsStrip addPerRound={gameState.addPerRound} cutOff={gameState.cutOff} />
-      <ResultSelector selectedResult={selectedResult} onSelect={setSelectedResult} />
+      <DiceRoller
+        disabled={gameState.gameOver}
+        selectedResult={selectedResult}
+        onRollResult={setSelectedResult}
+      />
       <GameActionButtons
         canAdvance={!gameState.gameOver && selectedResult !== null}
         gameOver={gameState.gameOver}

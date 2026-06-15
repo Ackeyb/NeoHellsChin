@@ -10,6 +10,7 @@
     "test": "node --test tests/*.test.ts"
   },
   "dependencies": {
+    "@3d-dice/dice-box": "^1.1.4",
     "@tailwindcss/postcss": "^4.1.6",
     "next": "^16.2.6",
     "react": "^19.0.0",

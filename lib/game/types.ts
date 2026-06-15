@@ -52,17 +52,6 @@ export type GameState = {
   rule123: Rule123 | null;
 };
 
-export type ResultChoice = {
-  id: "none" | "dice1" | "dice2" | "dice3" | "dice4" | "dice5" | "dice6" | "123" | "456" | "triple" | "111";
-  value: number;
-  labelKey: keyof typeof import("./labels").labels.resultChoices;
-  image?: {
-    normal: string;
-    selected: string;
-    alt: string;
-  };
-};
-
 export type GameEffect =
   | "none"
   | "finish"

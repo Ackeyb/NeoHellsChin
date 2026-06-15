@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { getGameResultFromDiceValues } from "../lib/game/dice.ts";
 import { applyResult, createInitialGameState } from "../lib/game/engine.ts";
 import type { GameState, Rule123 } from "../lib/game/types.ts";
 
@@ -168,4 +169,13 @@ test("finishes immediately when 123 end rule reaches cup limit", () => {
   assert.equal(outcome.state.gameOver, true);
   assert.equal(outcome.sound, "123");
   assert.deepEqual(outcome.effects, ["curse", "finish"]);
+});
+
+test("converts rolled dice values to game results", () => {
+  assert.equal(getGameResultFromDiceValues([1, 2, 3]), -100);
+  assert.equal(getGameResultFromDiceValues([6, 5, 4]), 106);
+  assert.equal(getGameResultFromDiceValues([1, 1, 1]), 306);
+  assert.equal(getGameResultFromDiceValues([5, 5, 5]), 206);
+  assert.equal(getGameResultFromDiceValues([2, 2, 6]), 6);
+  assert.equal(getGameResultFromDiceValues([1, 4, 6]), 0);
 });

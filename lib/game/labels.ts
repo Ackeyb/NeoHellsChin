@@ -83,7 +83,7 @@ export const textLocations = {
   fields: "設定フォーム・ゲーム画面の項目名",
   actions: "ボタン文言",
   rule123Options: "123 特別ルール設定の選択肢",
-  resultChoices: "出目選択ボタンのラベル/代替テキスト",
+  resultChoices: "サイコロ結果表示のラベル",
   statuses: "プレイヤー一覧に表示する状態名",
   messages: "入力エラー、確認ダイアログ、設定読み込み失敗時の文言",
   overlays: "ゲーム中の演出オーバーレイ文言",

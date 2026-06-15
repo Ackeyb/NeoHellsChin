@@ -4,6 +4,27 @@
   box-sizing: border-box;
 }
 
+:root {
+  --cute-ink: #243a3d;
+  --cute-muted: #587477;
+  --cute-primary: #00a9b7;
+  --cute-primary-deep: #007b8a;
+  --cute-coral: #ff7f6e;
+  --cute-coral-deep: #d94f42;
+  --cute-lemon: #fff1a8;
+  --cute-lemon-soft: #fff9d9;
+  --cute-mint: #d6fff2;
+  --cute-mint-soft: #f0fff9;
+  --cute-sky: #dff6ff;
+  --cute-panel: #ffffff;
+  --cute-panel-warm: #fffdf4;
+  --cute-border: #8edfe2;
+  --cute-border-soft: rgba(142, 223, 226, 0.72);
+  --cute-dot: rgba(131, 225, 211, 0.68);
+  --cute-shadow: rgba(0, 139, 148, 0.14);
+  --cute-shadow-strong: rgba(0, 121, 133, 0.24);
+}
+
 html,
 body {
   min-height: 100%;
@@ -11,10 +32,10 @@ body {
 
 body {
   margin: 0;
-  color: #2f2430;
+  color: var(--cute-ink);
   background:
     radial-gradient(circle at 16px 16px, rgba(255, 255, 255, 0.82) 0 3px, transparent 3px 100%),
-    linear-gradient(135deg, #fff7ed 0%, #ffe8f0 38%, #e7fff5 100%);
+    linear-gradient(135deg, #f1fffb 0%, #dff6ff 42%, #fff8d7 100%);
   background-size: 32px 32px, 100% 100%;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   line-height: 1.5;
@@ -53,15 +74,15 @@ button:disabled {
 
 .primary-button {
   color: #fff;
-  background: linear-gradient(180deg, #ff8eaa, #e94f79);
-  box-shadow: 0 5px 0 rgba(190, 55, 93, 0.24);
+  background: linear-gradient(180deg, #38d6d1, var(--cute-primary));
+  box-shadow: 0 5px 0 var(--cute-shadow-strong);
 }
 
 .secondary-button {
-  color: #6b3a44;
-  background: linear-gradient(180deg, #fff, #fff3d8);
-  border: 1px solid #efc5d0;
-  box-shadow: 0 4px 0 rgba(229, 176, 106, 0.18);
+  color: var(--cute-ink);
+  background: linear-gradient(180deg, #fff, var(--cute-lemon-soft));
+  border: 1px solid var(--cute-border);
+  box-shadow: 0 4px 0 rgba(255, 172, 111, 0.2);
 }
 
 .wide-button {
@@ -77,7 +98,7 @@ button:disabled {
   padding: 16px;
   background:
     radial-gradient(circle at 18px 18px, rgba(255, 255, 255, 0.2) 0 3px, transparent 3px 100%),
-    rgba(80, 33, 52, 0.42);
+    rgba(20, 92, 99, 0.42);
   background-size: 34px 34px, 100% 100%;
 }
 
@@ -85,9 +106,9 @@ button:disabled {
   width: min(100%, 340px);
   padding: 18px;
   border-radius: 8px;
-  background: linear-gradient(180deg, #fff, #fff9fb);
-  border: 1px solid rgba(243, 161, 179, 0.82);
-  box-shadow: 0 14px 32px rgba(156, 70, 98, 0.24);
+  background: linear-gradient(180deg, #fff, var(--cute-mint-soft));
+  border: 1px solid var(--cute-border-soft);
+  box-shadow: 0 14px 32px var(--cute-shadow-strong);
 }
 
 .player-dialog {
@@ -106,7 +127,7 @@ button:disabled {
 
 .dialog-title {
   margin-bottom: 12px;
-  color: #d91f4d;
+  color: var(--cute-primary-deep);
   font-size: 1.1rem;
   font-weight: 900;
   text-align: center;
@@ -114,7 +135,7 @@ button:disabled {
 
 .dialog-message {
   margin-bottom: 16px;
-  color: #6b3a44;
+  color: var(--cute-ink);
   text-align: center;
 }
 
@@ -131,7 +152,7 @@ button:disabled {
 .dialog-field {
   display: grid;
   gap: 8px;
-  color: #6b3a44;
+  color: var(--cute-ink);
   font-weight: 800;
 }
 
@@ -140,11 +161,11 @@ button:disabled {
   width: 100%;
   min-height: 38px;
   padding: 8px 10px;
-  border: 1px solid #efc5d0;
+  border: 1px solid var(--cute-border);
   border-radius: 8px;
-  color: #6b3a44;
-  background: #fffdf8;
-  box-shadow: inset 0 1px 4px rgba(233, 107, 138, 0.09);
+  color: var(--cute-ink);
+  background: var(--cute-panel-warm);
+  box-shadow: inset 0 1px 4px rgba(0, 169, 183, 0.09);
 }
 
 .dialog-field-list {
@@ -298,10 +319,10 @@ button:disabled {
 .happy-effect .effect-card,
 .happier-effect .effect-card,
 .happiest-effect .effect-card {
-  color: #6b2440;
+  color: var(--cute-ink);
   background: rgba(255, 255, 255, 0.72);
   border: 1px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 16px 60px rgba(255, 86, 155, 0.42);
+  box-shadow: 0 16px 60px rgba(0, 169, 183, 0.36);
 }
 
 .effect-title {
@@ -334,7 +355,7 @@ button:disabled {
   background:
     radial-gradient(circle at 20% 30%, #ffffff 0 4px, transparent 5px),
     radial-gradient(circle at 74% 34%, #fff176 0 5px, transparent 6px),
-    radial-gradient(circle at 36% 82%, #ff72bd 0 4px, transparent 5px),
+    radial-gradient(circle at 36% 82%, #ff9b87 0 4px, transparent 5px),
     radial-gradient(circle at 86% 78%, #55e7ff 0 5px, transparent 6px),
     radial-gradient(circle at 50% 12%, #9cff88 0 4px, transparent 5px);
 }
@@ -348,8 +369,8 @@ button:disabled {
     radial-gradient(circle at 18% 26%, rgba(255, 255, 255, 0.94) 0 0.45rem, transparent 0.5rem),
     radial-gradient(circle at 78% 28%, rgba(255, 238, 163, 0.9) 0 0.4rem, transparent 0.46rem),
     radial-gradient(circle at 30% 78%, rgba(186, 247, 223, 0.92) 0 0.44rem, transparent 0.5rem),
-    radial-gradient(circle at 84% 74%, rgba(255, 198, 214, 0.9) 0 0.5rem, transparent 0.56rem),
-    linear-gradient(120deg, rgba(255, 246, 250, 0.9), rgba(255, 249, 221, 0.7) 48%, rgba(232, 255, 246, 0.86)),
+    radial-gradient(circle at 84% 74%, rgba(255, 203, 190, 0.9) 0 0.5rem, transparent 0.56rem),
+    linear-gradient(120deg, rgba(240, 255, 249, 0.9), rgba(255, 249, 221, 0.7) 48%, rgba(223, 246, 255, 0.86)),
     repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.34) 0 2px, transparent 2px 16px);
   isolation: isolate;
   animation: cutInBackdrop 0.42s ease-out both;
@@ -391,8 +412,8 @@ button:disabled {
 
 .finish-cut-in .cut-in-slash,
 .finish-cut-in::after {
-  background: linear-gradient(90deg, transparent, #ffb8c8 16%, #ff5f92 48%, #fff0a6 64%, #ffb8c8 84%, transparent);
-  box-shadow: 0 0 42px rgba(255, 95, 146, 0.52);
+  background: linear-gradient(90deg, transparent, #a8f2ea 16%, #00a9b7 48%, #fff0a6 64%, #ffb9a8 84%, transparent);
+  box-shadow: 0 0 42px rgba(0, 169, 183, 0.52);
 }
 
 .nextRound-cut-in .cut-in-slash,
@@ -424,7 +445,7 @@ button:disabled {
 
 .finish-cut-in .cut-in-text {
   color: #fff8fb;
-  text-shadow: 0 4px 0 #c0265f, 0 0 30px rgba(255, 240, 166, 0.94);
+  text-shadow: 0 4px 0 var(--cute-primary-deep), 0 0 30px rgba(255, 240, 166, 0.94);
 }
 
 .nextRound-cut-in .cut-in-text {
