@@ -1,5 +1,5 @@
-import { labels } from "@/lib/game/labels";
 import { getGameResultFromDiceValues } from "@/lib/game/dice";
+import { labels } from "@/lib/game/labels";
 import styles from "@/styles/Game.module.css";
 import { useEffect, useId, useRef, useState } from "react";
 
@@ -21,16 +21,16 @@ type DiceBoxConstructor = new (options: {
 
 type DiceRollerProps = {
   disabled: boolean;
-  selectedResult: number | null;
   onRollResult: (result: number) => void;
 };
 
-export default function DiceRoller({ disabled, selectedResult, onRollResult }: DiceRollerProps) {
+export default function DiceRoller({ disabled, onRollResult }: DiceRollerProps) {
   const reactId = useId();
   const containerId = `dice-box-${reactId.replace(/:/g, "")}`;
   const diceBoxRef = useRef<DiceBoxInstance | null>(null);
   const [isReady, setIsReady] = useState(false);
   const [isRolling, setIsRolling] = useState(false);
+  const [lastResult, setLastResult] = useState<number | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function DiceRoller({ disabled, selectedResult, onRollResult }: D
         const diceBox = new DiceBox({
           assetPath: "/assets/",
           container: `#${containerId}`,
-          scale: 6,
+          scale: 18,
           themeColor: "#00a9b7",
         });
 
@@ -73,7 +73,9 @@ export default function DiceRoller({ disabled, selectedResult, onRollResult }: D
 
     try {
       const rolls = await diceBoxRef.current.roll("3d6");
-      onRollResult(toGameResult(rolls));
+      const result = toGameResult(rolls);
+      setLastResult(result);
+      onRollResult(result);
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Dice roll failed.");
     } finally {
@@ -81,15 +83,17 @@ export default function DiceRoller({ disabled, selectedResult, onRollResult }: D
     }
   };
 
+  const summary = errorMessage
+    ? errorMessage
+    : lastResult === null
+      ? "サイコロを振ってね"
+      : `出目: ${getResultLabel(lastResult)}`;
+
   return (
     <section className={styles.diceRollPanel} aria-label="Dice roller">
       <div id={containerId} className={styles.diceBoxViewport} />
       <div className={styles.rollSummary} aria-live="polite">
-        {errorMessage
-          ? errorMessage
-          : selectedResult === null
-            ? "サイコロを振ってね"
-            : `出目: ${getResultLabel(selectedResult)}`}
+        {summary}
       </div>
       <button
         className="primary-button wide-button"
@@ -104,9 +108,11 @@ export default function DiceRoller({ disabled, selectedResult, onRollResult }: D
 }
 
 function toGameResult(rolls: DiceRoll[]) {
-  return getGameResultFromDiceValues(rolls
-    .map((roll) => Number(roll.value))
-    .filter((value) => Number.isInteger(value)));
+  return getGameResultFromDiceValues(
+    rolls
+      .map((roll) => Number(roll.value))
+      .filter((value) => Number.isInteger(value)),
+  );
 }
 
 function getResultLabel(result: number) {

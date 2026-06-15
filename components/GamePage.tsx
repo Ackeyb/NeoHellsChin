@@ -21,7 +21,6 @@ type GamePageProps = {
 export default function GamePage({ mode }: GamePageProps) {
   const router = useRouter();
   const [gameState, setGameState] = useState<GameState | null>(null);
-  const [selectedResult, setSelectedResult] = useState<number | null>(null);
   const [effects, setEffects] = useState(initialEffects);
   const [showBackDialog, setShowBackDialog] = useState(false);
   const sounds = useGameSounds();
@@ -50,12 +49,11 @@ export default function GamePage({ mode }: GamePageProps) {
     }, delay);
   };
 
-  const handleResult = () => {
-    if (!gameState || selectedResult === null) return;
+  const handleResult = (result: number) => {
+    if (!gameState) return;
 
-    const outcome = applyResult(gameState, selectedResult);
+    const outcome = applyResult(gameState, result);
     setGameState(outcome.state);
-    setSelectedResult(null);
 
     if (outcome.sound) sounds.play(outcome.sound);
     const rollEffects: Array<{ effect: keyof EffectState; duration: number }> = [
@@ -95,15 +93,9 @@ export default function GamePage({ mode }: GamePageProps) {
       <GameHeader mode={gameState.mode} round={gameState.round} cups={gameState.cups} />
       <PlayerList players={gameState.players} currentPlayerId={currentPlayer?.id} />
       <GameSettingsStrip addPerRound={gameState.addPerRound} cutOff={gameState.cutOff} />
-      <DiceRoller
-        disabled={gameState.gameOver}
-        selectedResult={selectedResult}
-        onRollResult={setSelectedResult}
-      />
+      <DiceRoller disabled={gameState.gameOver} onRollResult={handleResult} />
       <GameActionButtons
-        canAdvance={!gameState.gameOver && selectedResult !== null}
         gameOver={gameState.gameOver}
-        onAdvance={handleResult}
         onBackToSettings={() => setShowBackDialog(true)}
         onPlayAgain={() => router.reload()}
       />

@@ -179,8 +179,8 @@
 .diceBoxViewport {
   position: relative;
   width: 100%;
-  min-height: 132px;
-  height: clamp(132px, 34vw, 172px);
+  min-height: 198px;
+  height: clamp(198px, 51vw, 258px);
   overflow: hidden;
   border: 1px dashed var(--cute-border);
   border-radius: 8px;
