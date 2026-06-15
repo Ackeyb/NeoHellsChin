@@ -1,4 +1,5 @@
 import { labels } from "@/lib/game/labels";
+import { PLAYER_NAME_MAX_LENGTH } from "@/lib/game/validation";
 
 type PlayerDialogProps = {
   players: string[];
@@ -36,7 +37,8 @@ export default function PlayerDialog({
           {players.map((name, index) => (
             <input
               key={index}
-              onChange={(event) => onPlayerNameChange(index, event.target.value)}
+              maxLength={PLAYER_NAME_MAX_LENGTH}
+              onChange={(event) => onPlayerNameChange(index, event.target.value.slice(0, PLAYER_NAME_MAX_LENGTH))}
               placeholder={`${labels.fields.playerName}${index + 1}`}
               type="text"
               value={name}

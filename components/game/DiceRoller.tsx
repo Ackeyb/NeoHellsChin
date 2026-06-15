@@ -43,7 +43,7 @@ export default function DiceRoller({ disabled, onRollResult }: DiceRollerProps) 
         const diceBox = new DiceBox({
           assetPath: "/assets/",
           container: `#${containerId}`,
-          scale: 18,
+          scale: 9,
           themeColor: "#00a9b7",
         });
 

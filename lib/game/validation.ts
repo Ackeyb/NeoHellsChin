@@ -1,6 +1,8 @@
 import { labels } from "./labels";
 import type { GameConfig } from "./types";
 
+export const PLAYER_NAME_MAX_LENGTH = 6;
+
 export type ConfigInput = {
   startCups: string;
   addPerRound: string;
@@ -12,6 +14,9 @@ export function validatePlayers(players: string[]) {
 
   if (trimmed.length < 2) throw new Error(labels.messages.invalidPlayerCount);
   if (trimmed.some((player) => player === "")) throw new Error(labels.messages.emptyPlayerName);
+  if (trimmed.some((player) => player.length > PLAYER_NAME_MAX_LENGTH)) {
+    throw new Error("プレイヤー名は6文字までです");
+  }
   if (new Set(trimmed).size !== trimmed.length) throw new Error(labels.messages.duplicatePlayerName);
 
   return trimmed;

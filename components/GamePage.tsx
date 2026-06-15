@@ -22,6 +22,7 @@ export default function GamePage({ mode }: GamePageProps) {
   const router = useRouter();
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [effects, setEffects] = useState(initialEffects);
+  const [turnCutInName, setTurnCutInName] = useState<string | null>(null);
   const [showBackDialog, setShowBackDialog] = useState(false);
   const sounds = useGameSounds();
 
@@ -49,10 +50,21 @@ export default function GamePage({ mode }: GamePageProps) {
     }, delay);
   };
 
+  const showTurnCutIn = (playerName: string, delay = 0) => {
+    window.setTimeout(() => {
+      setTurnCutInName(playerName);
+      window.setTimeout(() => {
+        setTurnCutInName(null);
+      }, 1400);
+    }, delay);
+  };
+
   const handleResult = (result: number) => {
     if (!gameState) return;
 
+    const previousPlayer = getCurrentPlayer(gameState);
     const outcome = applyResult(gameState, result);
+    const nextPlayer = getCurrentPlayer(outcome.state);
     setGameState(outcome.state);
 
     if (outcome.sound) sounds.play(outcome.sound);
@@ -69,6 +81,14 @@ export default function GamePage({ mode }: GamePageProps) {
     if (outcome.effects.includes("finish")) showTemporaryEffect("finish", 2200, followUpDelay);
     if (outcome.effects.includes("nextRound")) showTemporaryEffect("nextRound", 1600, followUpDelay);
     if (outcome.effects.includes("revive")) showTemporaryEffect("revive", 1800, followUpDelay);
+
+    if (!outcome.state.gameOver && nextPlayer && nextPlayer.id !== previousPlayer?.id) {
+      const turnDelay =
+        followUpDelay +
+        (outcome.effects.includes("nextRound") ? 1720 : 0) +
+        (outcome.effects.includes("revive") ? 1920 : 0);
+      showTurnCutIn(nextPlayer.name, turnDelay);
+    }
   };
 
   const backToSettings = () => {
@@ -99,7 +119,7 @@ export default function GamePage({ mode }: GamePageProps) {
         onBackToSettings={() => setShowBackDialog(true)}
         onPlayAgain={() => router.reload()}
       />
-      <GameEffects effects={effects} />
+      <GameEffects effects={effects} turnName={turnCutInName} />
 
       <MessageDialog
         open={showBackDialog}

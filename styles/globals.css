@@ -428,6 +428,12 @@ button:disabled {
   box-shadow: 0 0 44px rgba(85, 217, 145, 0.56);
 }
 
+.turn-cut-in .cut-in-slash,
+.turn-cut-in::after {
+  background: linear-gradient(90deg, transparent, #a8f2ea 16%, #00a9b7 46%, #fff0a6 64%, #a8f2ea 84%, transparent);
+  box-shadow: 0 0 44px rgba(0, 169, 183, 0.5);
+}
+
 .cut-in-text {
   position: relative;
   padding: 0.08em 0.22em 0.14em;
@@ -441,6 +447,29 @@ button:disabled {
   text-shadow: 0 4px 0 rgba(107, 58, 68, 0.3), 0 0 26px rgba(255, 255, 255, 0.86);
   transform: skew(-10deg) scale(0.76);
   animation: cutInText 0.78s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.cut-in-name,
+.cut-in-label {
+  display: block;
+  white-space: nowrap;
+  word-break: keep-all;
+  overflow-wrap: normal;
+}
+
+.turn-cut-in .cut-in-text {
+  color: #f8fdff;
+  text-align: center;
+  text-shadow: 0 4px 0 var(--cute-primary-deep), 0 0 30px rgba(255, 240, 166, 0.94);
+}
+
+.turn-cut-in .cut-in-name {
+  font-size: 0.88em;
+}
+
+.turn-cut-in .cut-in-label {
+  margin-top: 0.08em;
+  font-size: 0.52em;
 }
 
 .finish-cut-in .cut-in-text {
