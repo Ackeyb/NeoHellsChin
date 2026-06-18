@@ -32,6 +32,7 @@ type DiceBoxConstructor = new (options: {
 type RandomConfigDiceRollerProps = {
   values: ConfigInput;
   onConfigChange: (key: keyof ConfigInput, value: string) => void;
+  onRollStart: () => void;
 };
 
 type RollKey = "startCups" | "addPerRound" | "cutOff";
@@ -48,6 +49,7 @@ const rollReadDelayMs = 850;
 export default function RandomConfigDiceRoller({
   values,
   onConfigChange,
+  onRollStart,
 }: RandomConfigDiceRollerProps) {
   const reactId = useId().replace(/:/g, "");
   const boxIds = useMemo(
@@ -122,6 +124,7 @@ export default function RandomConfigDiceRoller({
 
     setIsRolling(true);
     setErrorMessage(null);
+    onRollStart();
 
     const startQty = pickWeightedValue(diceCountWeights);
     const addQty = pickWeightedValue(diceCountWeights);

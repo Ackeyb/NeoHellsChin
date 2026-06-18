@@ -17,6 +17,7 @@ type GameSettingsSectionProps = {
   onUseRule123Change: (enabled: boolean) => void;
   onRule123TypeChange: (type: Rule123["type"]) => void;
   onRollModeChange: (mode: RollMode) => void;
+  onSettingsDiceRoll: () => void;
   onEndCupLimitChange: (value: string) => void;
 };
 
@@ -30,6 +31,7 @@ export default function GameSettingsSection({
   onUseRule123Change,
   onRule123TypeChange,
   onRollModeChange,
+  onSettingsDiceRoll,
   onEndCupLimitChange,
 }: GameSettingsSectionProps) {
   return (
@@ -59,7 +61,11 @@ export default function GameSettingsSection({
         />
       </div>
 
-      <RandomConfigDiceRoller values={config} onConfigChange={onConfigChange} />
+      <RandomConfigDiceRoller
+        values={config}
+        onConfigChange={onConfigChange}
+        onRollStart={onSettingsDiceRoll}
+      />
 
       <RollModeSelector value={rollMode} onChange={onRollModeChange} />
 

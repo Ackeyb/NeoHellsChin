@@ -4,6 +4,7 @@ import HomeHeader from "@/components/home/HomeHeader";
 import PlayerDialog from "@/components/home/PlayerDialog";
 import PlayerSection from "@/components/home/PlayerSection";
 import StartActions from "@/components/home/StartActions";
+import useGameSounds from "@/hooks/useGameSounds";
 import { labels } from "@/lib/game/labels";
 import { defaultRollMode } from "@/lib/game/rollMode";
 import { loadResumePlayerNames, saveGameSetup } from "@/lib/game/storage";
@@ -21,6 +22,7 @@ const defaultConfig: ConfigInput = {
 
 export default function Home() {
   const router = useRouter();
+  const sounds = useGameSounds();
   const [config, setConfig] = useState<ConfigInput>(defaultConfig);
   const [players, setPlayers] = useState<string[]>([]);
   const [playerCount, setPlayerCount] = useState(2);
@@ -142,6 +144,7 @@ export default function Home() {
         onEndCupLimitChange={changeEndCupLimit}
         onRule123TypeChange={changeRule123Type}
         onRollModeChange={setRollMode}
+        onSettingsDiceRoll={() => sounds.play("diceRoll")}
         onUseRule123Change={changeRule123Enabled}
       />
       <StartActions onStart={startGame} />

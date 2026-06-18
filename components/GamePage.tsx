@@ -5,7 +5,7 @@ import GameEffects, { initialEffects, type EffectState } from "@/components/game
 import GameHeader from "@/components/game/GameHeader";
 import GameSettingsStrip from "@/components/game/GameSettingsStrip";
 import PlayerList from "@/components/game/PlayerList";
-import useGameSounds from "@/hooks/useGameSounds";
+import useGameSounds, { type GameSound } from "@/hooks/useGameSounds";
 import { applyResult, createInitialGameState, getCurrentPlayer } from "@/lib/game/engine";
 import { labels } from "@/lib/game/labels";
 import { loadGameSetup, saveResumePlayers } from "@/lib/game/storage";
@@ -42,8 +42,14 @@ export default function GamePage({ mode }: GamePageProps) {
   );
   const isUiLocked = turnCutInName !== null || Object.values(effects).some(Boolean);
 
-  const showTemporaryEffect = (effect: keyof EffectState, duration: number, delay = 0) => {
+  const showTemporaryEffect = (
+    effect: keyof EffectState,
+    duration: number,
+    delay = 0,
+    sound?: GameSound,
+  ) => {
     window.setTimeout(() => {
+      if (sound) sounds.play(sound);
       setEffects((prev) => ({ ...prev, [effect]: true }));
       window.setTimeout(() => {
         setEffects((prev) => ({ ...prev, [effect]: false }));
@@ -53,6 +59,7 @@ export default function GamePage({ mode }: GamePageProps) {
 
   const showTurnCutIn = (playerName: string, delay = 0) => {
     window.setTimeout(() => {
+      sounds.play("cutin");
       setTurnCutInName(playerName);
       window.setTimeout(() => {
         setTurnCutInName(null);
@@ -68,7 +75,11 @@ export default function GamePage({ mode }: GamePageProps) {
     const nextPlayer = getCurrentPlayer(outcome.state);
     setGameState(outcome.state);
 
-    if (outcome.sound) sounds.play(outcome.sound);
+    if (outcome.sound === "123" && gameState.rule123?.type === "revive") {
+      sounds.play("alive");
+    } else if (outcome.sound) {
+      sounds.play(outcome.sound);
+    }
     const rollEffects: Array<{ effect: keyof EffectState; duration: number }> = [
       { effect: "curse", duration: 2800 },
       { effect: "happy", duration: 2200 },
@@ -79,8 +90,8 @@ export default function GamePage({ mode }: GamePageProps) {
     const followUpDelay = rollEffect ? rollEffect.duration + 120 : 0;
 
     if (rollEffect) showTemporaryEffect(rollEffect.effect, rollEffect.duration);
-    if (outcome.effects.includes("finish")) showTemporaryEffect("finish", 2200, followUpDelay);
-    if (outcome.effects.includes("nextRound")) showTemporaryEffect("nextRound", 1600, followUpDelay);
+    if (outcome.effects.includes("finish")) showTemporaryEffect("finish", 2200, followUpDelay, "end");
+    if (outcome.effects.includes("nextRound")) showTemporaryEffect("nextRound", 1600, followUpDelay, "cutin");
     if (outcome.effects.includes("revive")) showTemporaryEffect("revive", 1800, followUpDelay);
 
     if (!outcome.state.gameOver && nextPlayer && nextPlayer.id !== previousPlayer?.id) {
@@ -118,13 +129,17 @@ export default function GamePage({ mode }: GamePageProps) {
         disabled={gameState.gameOver || isUiLocked}
         playerName={currentPlayer?.name ?? ""}
         rollMode={gameState.rollMode}
+        onRollStart={(isBurst) => sounds.play(isBurst ? "magic" : "diceRoll")}
         onRollResult={handleResult}
       />
       <GameActionButtons
         disabled={isUiLocked}
         gameOver={gameState.gameOver}
         onBackToSettings={() => setShowBackDialog(true)}
-        onPlayAgain={() => router.reload()}
+        onPlayAgain={() => {
+          sounds.play("stay");
+          window.setTimeout(() => router.reload(), 180);
+        }}
       />
       <GameEffects effects={effects} turnName={turnCutInName} />
 

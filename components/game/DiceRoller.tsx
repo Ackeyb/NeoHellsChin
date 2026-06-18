@@ -26,6 +26,7 @@ type DiceRollerProps = {
   disabled: boolean;
   playerName: string;
   rollMode: RollMode;
+  onRollStart: (isBurst: boolean) => void;
   onRollResult: (result: number) => void;
 };
 
@@ -35,7 +36,13 @@ const burstSettleDelayMs: Record<RollMode, number> = {
   rough: 1250,
 };
 
-export default function DiceRoller({ disabled, playerName, rollMode, onRollResult }: DiceRollerProps) {
+export default function DiceRoller({
+  disabled,
+  playerName,
+  rollMode,
+  onRollStart,
+  onRollResult,
+}: DiceRollerProps) {
   const reactId = useId();
   const containerId = `dice-box-${reactId.replace(/:/g, "")}`;
   const diceBoxRef = useRef<DiceBoxInstance | null>(null);
@@ -88,6 +95,7 @@ export default function DiceRoller({ disabled, playerName, rollMode, onRollResul
     setLastWasChai(false);
 
     const isBurst = shouldBurst(rollMode);
+    onRollStart(isBurst);
     if (isBurst) {
       setIsBurstWorldOpen(true);
       await waitForFrame();
