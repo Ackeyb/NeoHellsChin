@@ -21,7 +21,6 @@ export default function RollModeSelector({ value, onChange }: RollModeSelectorPr
             aria-pressed={value === option.mode}
           >
             <span>{option.label}</span>
-            <small>{option.description}</small>
           </button>
         ))}
       </div>

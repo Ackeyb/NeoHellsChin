@@ -3,12 +3,11 @@ import type { RollMode } from "./types";
 export const rollModeOptions: Array<{
   mode: RollMode;
   label: string;
-  description: string;
   burstChance: number;
 }> = [
-  { mode: "gentle", label: "丁寧", description: "ふんわり 1%", burstChance: 0.01 },
-  { mode: "normal", label: "普通", description: "いつもの 5%", burstChance: 0.05 },
-  { mode: "rough", label: "乱暴", description: "つよめ 10%", burstChance: 0.1 },
+  { mode: "gentle", label: "丁寧", burstChance: 0.01 },
+  { mode: "normal", label: "普通", burstChance: 0.05 },
+  { mode: "rough", label: "乱暴", burstChance: 0.1 },
 ];
 
 export const defaultRollMode: RollMode = "normal";

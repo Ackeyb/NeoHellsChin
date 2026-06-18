@@ -15,14 +15,7 @@ type DiceRoll = {
 
 type DiceBoxInstance = {
   init: () => Promise<DiceBoxInstance>;
-  roll: (notation: DiceNotation | DiceNotation[]) => Promise<DiceRoll[]>;
-};
-
-type DiceNotation = {
-  sides: number;
-  qty: number;
-  groupId: string;
-  value?: number;
+  roll: (notation: string) => Promise<DiceRoll[]>;
 };
 
 type DiceBoxConstructor = new (options: {
@@ -44,6 +37,8 @@ const rollFields: Array<{ key: RollKey; label: string }> = [
   { key: "addPerRound", label: "増加杯数" },
   { key: "cutOff", label: "無効にする出目" },
 ];
+
+const visualRollDurationMs = 2200;
 
 export default function RandomConfigDiceRoller({
   values,
@@ -126,16 +121,14 @@ export default function RandomConfigDiceRoller({
     const startQty = pickWeightedValue(diceCountWeights);
     const addQty = pickWeightedValue(diceCountWeights);
     const cutOffValue = pickWeightedValue(cutOffWeights);
-    const startValues = rollDiceValues(startQty);
-    const addValues = rollDiceValues(addQty);
-    const startTotal = sumNumbers(startValues);
-    const addTotal = sumNumbers(addValues);
+    const startTotal = sumNumbers(rollDiceValues(startQty));
+    const addTotal = sumNumbers(rollDiceValues(addQty));
 
     try {
       await Promise.all([
-        startBox.roll(startValues.map((value, index) => ({ sides: 6, qty: 1, groupId: `startCups-${index}`, value }))),
-        addBox.roll(addValues.map((value, index) => ({ sides: 6, qty: 1, groupId: `addPerRound-${index}`, value }))),
-        cutOffBox.roll([{ sides: 6, qty: 1, groupId: "cutOff", value: cutOffValue }]),
+        rollForDisplay(startBox, `${startQty}d6`),
+        rollForDisplay(addBox, `${addQty}d6`),
+        rollForDisplay(cutOffBox, "1d6"),
       ]);
 
       onConfigChange("startCups", String(startTotal));
@@ -174,4 +167,14 @@ export default function RandomConfigDiceRoller({
       {errorMessage && <div className={styles.randomConfigError}>{errorMessage}</div>}
     </div>
   );
+}
+
+function rollForDisplay(box: DiceBoxInstance, notation: string) {
+  const rollPromise = box.roll(notation);
+  rollPromise.catch(() => undefined);
+  return Promise.race([rollPromise, wait(visualRollDurationMs)]);
+}
+
+function wait(ms: number) {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
