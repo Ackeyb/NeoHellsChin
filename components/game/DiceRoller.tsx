@@ -139,7 +139,12 @@ export default function DiceRoller({ disabled, playerName, rollMode, onRollResul
   const modeOption = getRollModeOption(rollMode);
 
   return (
-    <section className={`${styles.diceRollPanel} ${isRolling && rollMode === "rough" ? styles.roughRoll : ""}`} aria-label="Dice roller">
+    <section
+      className={`${styles.diceRollPanel} ${isRolling && rollMode === "rough" ? styles.roughRoll : ""} ${
+        burstDie ? styles.wallsOpen : ""
+      }`}
+      aria-label="Dice roller"
+    >
       <div ref={viewportRef} id={containerId} className={styles.diceBoxViewport}>
         {burstDie && (
           <div

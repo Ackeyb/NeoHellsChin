@@ -2,7 +2,8 @@ import {
   cutOffWeights,
   diceCountWeights,
   pickWeightedValue,
-  sumDiceRolls,
+  rollDiceValues,
+  sumNumbers,
 } from "@/lib/game/randomSettings";
 import type { ConfigInput } from "@/lib/game/validation";
 import styles from "@/styles/Home.module.css";
@@ -125,16 +126,20 @@ export default function RandomConfigDiceRoller({
     const startQty = pickWeightedValue(diceCountWeights);
     const addQty = pickWeightedValue(diceCountWeights);
     const cutOffValue = pickWeightedValue(cutOffWeights);
+    const startValues = rollDiceValues(startQty);
+    const addValues = rollDiceValues(addQty);
+    const startTotal = sumNumbers(startValues);
+    const addTotal = sumNumbers(addValues);
 
     try {
-      const [startRolls, addRolls] = await Promise.all([
-        startBox.roll({ sides: 6, qty: startQty, groupId: "startCups" }),
-        addBox.roll({ sides: 6, qty: addQty, groupId: "addPerRound" }),
+      await Promise.all([
+        startBox.roll(startValues.map((value, index) => ({ sides: 6, qty: 1, groupId: `startCups-${index}`, value }))),
+        addBox.roll(addValues.map((value, index) => ({ sides: 6, qty: 1, groupId: `addPerRound-${index}`, value }))),
         cutOffBox.roll([{ sides: 6, qty: 1, groupId: "cutOff", value: cutOffValue }]),
       ]);
 
-      onConfigChange("startCups", String(sumDiceRolls(startRolls)));
-      onConfigChange("addPerRound", String(sumDiceRolls(addRolls)));
+      onConfigChange("startCups", String(startTotal));
+      onConfigChange("addPerRound", String(addTotal));
       onConfigChange("cutOff", String(cutOffValue));
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Dice roll failed.");

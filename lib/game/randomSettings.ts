@@ -37,3 +37,11 @@ export function sumDiceRolls(rolls: Array<{ value?: number | string }>) {
     return Number.isFinite(value) ? sum + value : sum;
   }, 0);
 }
+
+export function rollDiceValues(qty: number, random = Math.random) {
+  return Array.from({ length: qty }, () => Math.floor(random() * 6) + 1);
+}
+
+export function sumNumbers(values: number[]) {
+  return values.reduce((sum, value) => sum + value, 0);
+}
