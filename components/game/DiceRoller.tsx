@@ -1,6 +1,6 @@
 import { getGameResultFromDiceValues } from "@/lib/game/dice";
 import { labels } from "@/lib/game/labels";
-import { getRollModeOption, isOutsideBoundary, shouldBurst } from "@/lib/game/rollMode";
+import { getRollModeOption, shouldBurst } from "@/lib/game/rollMode";
 import type { RollMode } from "@/lib/game/types";
 import styles from "@/styles/Game.module.css";
 import { useEffect, useId, useRef, useState } from "react";
@@ -11,6 +11,7 @@ type DiceRoll = {
 
 type DiceBoxInstance = {
   init: () => Promise<DiceBoxInstance>;
+  resizeWorld?: () => void;
   roll: (notation: string) => Promise<DiceRoll[]>;
 };
 
@@ -28,33 +29,22 @@ type DiceRollerProps = {
   onRollResult: (result: number) => void;
 };
 
-type BurstDie = {
-  id: number;
-  mode: RollMode;
-  face: number;
-  startX: number;
-  startY: number;
-};
-
-const burstDurations: Record<RollMode, number> = {
-  gentle: 820,
-  normal: 920,
-  rough: 1080,
+const burstSettleDelayMs: Record<RollMode, number> = {
+  gentle: 900,
+  normal: 1050,
+  rough: 1250,
 };
 
 export default function DiceRoller({ disabled, playerName, rollMode, onRollResult }: DiceRollerProps) {
   const reactId = useId();
   const containerId = `dice-box-${reactId.replace(/:/g, "")}`;
   const diceBoxRef = useRef<DiceBoxInstance | null>(null);
-  const viewportRef = useRef<HTMLDivElement | null>(null);
-  const burstDieRef = useRef<HTMLDivElement | null>(null);
-  const burstCounterRef = useRef(0);
   const [isReady, setIsReady] = useState(false);
   const [isRolling, setIsRolling] = useState(false);
   const [lastResult, setLastResult] = useState<number | null>(null);
   const [lastRollPlayerName, setLastRollPlayerName] = useState<string | null>(null);
   const [lastWasChai, setLastWasChai] = useState(false);
-  const [burstDie, setBurstDie] = useState<BurstDie | null>(null);
+  const [isBurstWorldOpen, setIsBurstWorldOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -90,54 +80,40 @@ export default function DiceRoller({ disabled, playerName, rollMode, onRollResul
   }, [containerId]);
 
   const rollDice = async () => {
-    if (!diceBoxRef.current || disabled || isRolling) return;
+    const diceBox = diceBoxRef.current;
+    if (!diceBox || disabled || isRolling) return;
 
     setIsRolling(true);
     setErrorMessage(null);
     setLastWasChai(false);
 
-    const burstCandidate = shouldBurst(rollMode);
-    const burstAnimation = burstCandidate ? startBurstAnimation(rollMode) : Promise.resolve(false);
+    const isBurst = shouldBurst(rollMode);
+    if (isBurst) {
+      setIsBurstWorldOpen(true);
+      await waitForFrame();
+      await waitForFrame();
+      diceBox.resizeWorld?.();
+    }
 
     try {
-      const rolls = await diceBoxRef.current.roll("3d6");
-      const isChai = await burstAnimation;
-      const result = isChai ? 0 : toGameResult(rolls);
+      const rolls = await diceBox.roll("3d6");
+      if (isBurst) await wait(burstSettleDelayMs[rollMode]);
+      const result = isBurst ? 0 : toGameResult(rolls);
 
       setLastResult(result);
-      setLastWasChai(isChai);
+      setLastWasChai(isBurst);
       setLastRollPlayerName(playerName);
       onRollResult(result);
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Dice roll failed.");
     } finally {
       setIsRolling(false);
-      window.setTimeout(() => setBurstDie(null), 220);
+      if (isBurst) {
+        setIsBurstWorldOpen(false);
+        await waitForFrame();
+        diceBox.resizeWorld?.();
+      }
     }
-  };
-
-  const startBurstAnimation = async (mode: RollMode) => {
-    const viewportRect = viewportRef.current?.getBoundingClientRect();
-    const id = burstCounterRef.current + 1;
-    burstCounterRef.current = id;
-    setBurstDie({
-      id,
-      mode,
-      face: Math.floor(Math.random() * 6) + 1,
-      startX: viewportRect ? viewportRect.left + viewportRect.width / 2 - 18 : window.innerWidth / 2 - 18,
-      startY: viewportRect ? viewportRect.top + viewportRect.height / 2 - 18 : window.innerHeight / 2 - 18,
-    });
-
-    await waitForFrame();
-    await waitForFrame();
-    await wait(burstDurations[mode]);
-
-    const targetRect = burstDieRef.current?.getBoundingClientRect();
-    const boundaryRect = viewportRef.current?.getBoundingClientRect();
-    if (!targetRect || !boundaryRect) return false;
-
-    // Future sound hook: this is the exact branch where a dedicated chai sound should fire.
-    return isOutsideBoundary(targetRect, boundaryRect, 4);
   };
 
   const summary = errorMessage
@@ -150,22 +126,11 @@ export default function DiceRoller({ disabled, playerName, rollMode, onRollResul
   return (
     <section
       className={`${styles.diceRollPanel} ${isRolling && rollMode === "rough" ? styles.roughRoll : ""} ${
-        burstDie ? styles.wallsOpen : ""
+        isBurstWorldOpen ? styles.burstWorldOpen : ""
       }`}
       aria-label="Dice roller"
     >
-      <div ref={viewportRef} id={containerId} className={styles.diceBoxViewport} />
-      {burstDie && (
-        <div
-          key={burstDie.id}
-          ref={burstDieRef}
-          className={`${styles.burstDie} ${styles[`${burstDie.mode}Burst`]}`}
-          style={{ left: burstDie.startX, top: burstDie.startY }}
-          aria-hidden="true"
-        >
-          {burstDie.face}
-        </div>
-      )}
+      <div id={containerId} className={styles.diceBoxViewport} />
       <div className={styles.rollSummary} aria-live="polite">
         {summary}
       </div>

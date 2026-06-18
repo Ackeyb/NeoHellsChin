@@ -40,6 +40,7 @@ export default function GamePage({ mode }: GamePageProps) {
     () => (gameState ? getCurrentPlayer(gameState) : null),
     [gameState],
   );
+  const isUiLocked = turnCutInName !== null || Object.values(effects).some(Boolean);
 
   const showTemporaryEffect = (effect: keyof EffectState, duration: number, delay = 0) => {
     window.setTimeout(() => {
@@ -114,12 +115,13 @@ export default function GamePage({ mode }: GamePageProps) {
       <PlayerList players={gameState.players} currentPlayerId={currentPlayer?.id} />
       <GameSettingsStrip addPerRound={gameState.addPerRound} cutOff={gameState.cutOff} />
       <DiceRoller
-        disabled={gameState.gameOver}
+        disabled={gameState.gameOver || isUiLocked}
         playerName={currentPlayer?.name ?? ""}
         rollMode={gameState.rollMode}
         onRollResult={handleResult}
       />
       <GameActionButtons
+        disabled={isUiLocked}
         gameOver={gameState.gameOver}
         onBackToSettings={() => setShowBackDialog(true)}
         onPlayAgain={() => router.reload()}

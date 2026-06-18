@@ -42,7 +42,8 @@ const rollFields: Array<{ key: RollKey; label: string }> = [
   { key: "cutOff", label: "無効にする出目" },
 ];
 
-const visualRollDurationMs = 2400;
+const visualRollDurationMs = 3200;
+const rollReadDelayMs = 850;
 
 export default function RandomConfigDiceRoller({
   values,
@@ -174,7 +175,10 @@ async function rollForDisplay(box: DiceBoxInstance, notation: string) {
   const rollPromise = box.roll(notation);
   rollPromise.catch(() => undefined);
   const result = await Promise.race([rollPromise, wait(visualRollDurationMs)]);
-  return Array.isArray(result) && result.length > 0 ? result : readRollsFromBox(box);
+  await wait(rollReadDelayMs);
+  const settledRolls = readRollsFromBox(box);
+  if (settledRolls.length > 0 && sumDiceRolls(settledRolls) > 0) return settledRolls;
+  return Array.isArray(result) && result.length > 0 ? result : settledRolls;
 }
 
 function readRollsFromBox(box: DiceBoxInstance) {
