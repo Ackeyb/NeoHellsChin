@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { getGameResultFromDiceValues } from "../lib/game/dice.ts";
 import { applyResult, createInitialGameState } from "../lib/game/engine.ts";
+import { cutOffWeights, diceCountWeights, pickWeightedValue } from "../lib/game/randomSettings.ts";
+import { isOutsideBoundary, shouldBurst } from "../lib/game/rollMode.ts";
 import type { GameState, Rule123 } from "../lib/game/types.ts";
 
 const baseConfig = {
@@ -35,6 +37,7 @@ test("creates an initial game state from setup", () => {
   const state = createState({ players: ["Alice", "Bob", "Carol"], mode: "win" });
 
   assert.equal(state.mode, "win");
+  assert.equal(state.rollMode, "normal");
   assert.equal(state.round, 1);
   assert.equal(state.cups, 3);
   assert.equal(state.turn, 0);
@@ -178,4 +181,33 @@ test("converts rolled dice values to game results", () => {
   assert.equal(getGameResultFromDiceValues([5, 5, 5]), 206);
   assert.equal(getGameResultFromDiceValues([2, 2, 6]), 6);
   assert.equal(getGameResultFromDiceValues([1, 4, 6]), 0);
+});
+
+test("picks weighted random setting values from configured ranges", () => {
+  assert.equal(pickWeightedValue(diceCountWeights, () => 0), 1);
+  assert.equal(pickWeightedValue(diceCountWeights, () => 0.3), 2);
+  assert.equal(pickWeightedValue(diceCountWeights, () => 0.69), 3);
+  assert.equal(pickWeightedValue(diceCountWeights, () => 0.995), 4);
+
+  assert.equal(pickWeightedValue(cutOffWeights, () => 0), 1);
+  assert.equal(pickWeightedValue(cutOffWeights, () => 0.03), 2);
+  assert.equal(pickWeightedValue(cutOffWeights, () => 0.15), 4);
+  assert.equal(pickWeightedValue(cutOffWeights, () => 0.62), 6);
+});
+
+test("checks burst roll probabilities by mode", () => {
+  assert.equal(shouldBurst("gentle", () => 0.009), true);
+  assert.equal(shouldBurst("gentle", () => 0.01), false);
+  assert.equal(shouldBurst("normal", () => 0.049), true);
+  assert.equal(shouldBurst("normal", () => 0.05), false);
+  assert.equal(shouldBurst("rough", () => 0.099), true);
+  assert.equal(shouldBurst("rough", () => 0.1), false);
+});
+
+test("detects whether a burst die crossed the play boundary", () => {
+  const boundary = { left: 10, right: 110, top: 20, bottom: 120 };
+
+  assert.equal(isOutsideBoundary({ left: 30, right: 60, top: 40, bottom: 80 }, boundary, 4), false);
+  assert.equal(isOutsideBoundary({ left: 116, right: 144, top: 40, bottom: 80 }, boundary, 4), true);
+  assert.equal(isOutsideBoundary({ left: 80, right: 108, top: -20, bottom: 10 }, boundary, 4), true);
 });

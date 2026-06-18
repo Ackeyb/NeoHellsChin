@@ -1,4 +1,5 @@
 import type { GameSetup, Player } from "./types";
+import { normalizeRollMode } from "./rollMode.ts";
 
 const GAME_CONFIG_KEY = "gameConfig";
 const RESUME_PLAYERS_KEY = "resumePlayers";
@@ -13,7 +14,7 @@ export function loadGameSetup(): GameSetup | null {
     const parsed = JSON.parse(raw) as GameSetup;
     if (!Array.isArray(parsed.players) || parsed.players.length < 2) return null;
     if (!parsed.config || typeof parsed.config.startCups !== "number") return null;
-    return parsed;
+    return { ...parsed, rollMode: normalizeRollMode(parsed.rollMode) };
   } catch {
     return null;
   }

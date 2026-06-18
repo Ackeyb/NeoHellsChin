@@ -1,18 +1,22 @@
 import { labels } from "@/lib/game/labels";
-import type { Rule123 } from "@/lib/game/types";
+import type { RollMode, Rule123 } from "@/lib/game/types";
 import type { ConfigInput } from "@/lib/game/validation";
 import styles from "@/styles/Home.module.css";
 import NumericField from "./NumericField";
+import RandomConfigDiceRoller from "./RandomConfigDiceRoller";
+import RollModeSelector from "./RollModeSelector";
 import Rule123Settings from "./Rule123Settings";
 
 type GameSettingsSectionProps = {
   config: ConfigInput;
   useRule123: boolean;
   rule123Type: Rule123["type"];
+  rollMode: RollMode;
   endCupLimit: string;
   onConfigChange: (key: keyof ConfigInput, value: string) => void;
   onUseRule123Change: (enabled: boolean) => void;
   onRule123TypeChange: (type: Rule123["type"]) => void;
+  onRollModeChange: (mode: RollMode) => void;
   onEndCupLimitChange: (value: string) => void;
 };
 
@@ -20,10 +24,12 @@ export default function GameSettingsSection({
   config,
   useRule123,
   rule123Type,
+  rollMode,
   endCupLimit,
   onConfigChange,
   onUseRule123Change,
   onRule123TypeChange,
+  onRollModeChange,
   onEndCupLimitChange,
 }: GameSettingsSectionProps) {
   return (
@@ -52,6 +58,10 @@ export default function GameSettingsSection({
           onChange={(value) => onConfigChange("cutOff", value)}
         />
       </div>
+
+      <RandomConfigDiceRoller values={config} onConfigChange={onConfigChange} />
+
+      <RollModeSelector value={rollMode} onChange={onRollModeChange} />
 
       <Rule123Settings
         endCupLimit={endCupLimit}

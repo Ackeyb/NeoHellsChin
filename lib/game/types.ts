@@ -1,4 +1,5 @@
 export type GameMode = "lose" | "win";
+export type RollMode = "gentle" | "normal" | "rough";
 
 export type Rule123 =
   | {
@@ -21,6 +22,7 @@ export type GameSetup = {
   config: GameConfig;
   rule123: Rule123 | null;
   mode: GameMode;
+  rollMode: RollMode;
 };
 
 export type PlayerStatus =
@@ -50,6 +52,7 @@ export type GameState = {
   turn: number;
   gameOver: boolean;
   rule123: Rule123 | null;
+  rollMode: RollMode;
 };
 
 export type GameEffect =

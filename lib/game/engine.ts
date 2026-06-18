@@ -1,10 +1,12 @@
 import type { ApplyResultOutcome, GameState, Player, PlayerStatus } from "./types";
+import { normalizeRollMode } from "./rollMode.ts";
 
 export function createInitialGameState(setup: {
   players: string[];
   config: { startCups: number; addPerRound: number; cutOff: number };
   mode: GameState["mode"];
   rule123: GameState["rule123"];
+  rollMode?: GameState["rollMode"];
 }): GameState {
   return {
     players: setup.players.map((name, index) => ({
@@ -23,6 +25,7 @@ export function createInitialGameState(setup: {
     turn: 0,
     gameOver: false,
     rule123: setup.rule123,
+    rollMode: normalizeRollMode(setup.rollMode),
   };
 }
 

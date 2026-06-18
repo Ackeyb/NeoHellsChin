@@ -185,6 +185,147 @@
   background-size: 100% 100%, 18px 18px;
 }
 
+.randomConfigArea {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.randomConfigButton {
+  width: 100%;
+  min-height: 36px;
+  padding: 7px 16px;
+  border: none;
+  border-radius: 999px;
+  color: #fff;
+  background: linear-gradient(180deg, #38d6d1, var(--cute-primary));
+  box-shadow: 0 5px 0 var(--cute-shadow-strong), 0 8px 14px var(--cute-shadow);
+  font-size: 0.95rem;
+  font-weight: 900;
+  transition: transform 0.14s ease, filter 0.14s ease;
+}
+
+.randomConfigButton:hover {
+  transform: translateY(-1px);
+  filter: saturate(1.05);
+}
+
+.randomConfigButton:disabled {
+  opacity: 0.62;
+  transform: none;
+}
+
+.randomConfigPanel {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.randomConfigColumn {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 6px;
+  min-height: 176px;
+  padding: 7px;
+  border: 1px solid rgba(142, 223, 226, 0.8);
+  border-radius: 8px;
+  background: linear-gradient(180deg, #fff, var(--cute-mint-soft));
+  box-shadow: 0 4px 10px rgba(0, 169, 183, 0.1);
+}
+
+.randomConfigLabel {
+  min-height: 30px;
+  color: var(--cute-ink);
+  font-size: 0.78rem;
+  font-weight: 900;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.randomConfigDiceBox {
+  position: relative;
+  min-height: 112px;
+  overflow: hidden;
+  border: 1px dashed var(--cute-border);
+  border-radius: 8px;
+  background:
+    linear-gradient(0deg, rgba(255, 241, 168, 0.46), transparent 38%),
+    linear-gradient(180deg, var(--cute-sky), #e7fffb);
+}
+
+.randomConfigDiceBox canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.randomConfigResult {
+  min-height: 28px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  color: var(--cute-primary-deep);
+  background: var(--cute-lemon);
+  border: 1px solid var(--cute-border-soft);
+  font-weight: 900;
+  text-align: center;
+}
+
+.randomConfigError {
+  color: #8f2f26;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.rollModeBox {
+  display: grid;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 8px;
+  border: 1px solid var(--cute-border);
+  border-radius: 8px;
+  background: linear-gradient(180deg, #fff, var(--cute-lemon-soft));
+  box-shadow: 0 4px 10px rgba(0, 169, 183, 0.1);
+}
+
+.rollModeTitle {
+  color: var(--cute-primary-deep);
+  font-size: 0.9rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+.rollModeChoices {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.rollModeChoice {
+  display: grid;
+  gap: 2px;
+  min-height: 48px;
+  padding: 6px 4px;
+  border: 1px solid rgba(142, 223, 226, 0.8);
+  border-radius: 8px;
+  color: var(--cute-ink);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 3px 0 rgba(0, 169, 183, 0.12);
+  font-weight: 900;
+}
+
+.rollModeChoice small {
+  color: var(--cute-muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.rollModeSelected {
+  color: var(--cute-primary-deep);
+  background: linear-gradient(180deg, var(--cute-lemon), #fff);
+  border-color: var(--cute-coral);
+  box-shadow: 0 0 0 3px rgba(255, 207, 191, 0.58), 0 3px 0 rgba(0, 169, 183, 0.14);
+}
+
 .checkRow,
 .radioRow,
 .nestedField {
@@ -273,5 +414,18 @@
   .ruleChoices {
     grid-template-columns: 1fr;
     gap: 0;
+  }
+
+  .randomConfigPanel {
+    gap: 6px;
+  }
+
+  .randomConfigColumn {
+    min-height: 166px;
+    padding: 6px;
+  }
+
+  .randomConfigLabel {
+    font-size: 0.72rem;
   }
 }

@@ -196,6 +196,41 @@
   height: 100% !important;
 }
 
+.burstDie {
+  position: absolute;
+  left: calc(50% - 18px);
+  bottom: 18px;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--cute-primary-deep);
+  border-radius: 8px;
+  color: var(--cute-primary-deep);
+  background: linear-gradient(145deg, #fff, var(--cute-lemon));
+  box-shadow: 0 8px 16px rgba(0, 169, 183, 0.22);
+  font-weight: 900;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.gentleBurst {
+  animation: gentleBurstFly 0.78s cubic-bezier(0.22, 0.8, 0.18, 1) forwards;
+}
+
+.normalBurst {
+  animation: normalBurstFly 0.86s cubic-bezier(0.16, 0.86, 0.18, 1) forwards;
+}
+
+.roughBurst {
+  animation: roughBurstFly 0.98s cubic-bezier(0.08, 0.9, 0.12, 1) forwards;
+}
+
+.roughRoll .diceBoxViewport {
+  animation: roughRollShake 0.34s ease-in-out 3;
+}
+
 .rollSummary {
   min-height: 28px;
   padding: 4px 12px;
@@ -206,6 +241,52 @@
   font-size: 0.9rem;
   font-weight: 900;
   text-align: center;
+}
+
+@keyframes gentleBurstFly {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  100% {
+    transform: translate3d(-76px, -232px, 0) rotate(-410deg) scale(0.9);
+  }
+}
+
+@keyframes normalBurstFly {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  100% {
+    transform: translate3d(118px, -268px, 0) rotate(620deg) scale(0.86);
+  }
+}
+
+@keyframes roughBurstFly {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1.04);
+  }
+  42% {
+    transform: translate3d(92px, -118px, 0) rotate(450deg) scale(1.02);
+  }
+  100% {
+    transform: translate3d(184px, -342px, 0) rotate(940deg) scale(0.74);
+  }
+}
+
+@keyframes roughRollShake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-3px);
+  }
+  50% {
+    transform: translateX(3px);
+  }
+  75% {
+    transform: translateX(-2px);
+  }
 }
 
 .textChoice {

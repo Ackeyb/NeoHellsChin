@@ -113,7 +113,12 @@ export default function GamePage({ mode }: GamePageProps) {
       <GameHeader mode={gameState.mode} round={gameState.round} cups={gameState.cups} />
       <PlayerList players={gameState.players} currentPlayerId={currentPlayer?.id} />
       <GameSettingsStrip addPerRound={gameState.addPerRound} cutOff={gameState.cutOff} />
-      <DiceRoller disabled={gameState.gameOver} onRollResult={handleResult} />
+      <DiceRoller
+        disabled={gameState.gameOver}
+        playerName={currentPlayer?.name ?? ""}
+        rollMode={gameState.rollMode}
+        onRollResult={handleResult}
+      />
       <GameActionButtons
         gameOver={gameState.gameOver}
         onBackToSettings={() => setShowBackDialog(true)}
