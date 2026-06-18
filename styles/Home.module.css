@@ -302,9 +302,9 @@
 
 .rollModeChoice {
   display: grid;
-  gap: 2px;
-  min-height: 48px;
-  padding: 6px 4px;
+  place-items: center;
+  min-height: 34px;
+  padding: 4px;
   border: 1px solid rgba(142, 223, 226, 0.8);
   border-radius: 8px;
   color: var(--cute-ink);

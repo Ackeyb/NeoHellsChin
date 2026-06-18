@@ -1,9 +1,7 @@
 import {
-  cutOffWeights,
   diceCountWeights,
   pickWeightedValue,
-  rollDiceValues,
-  sumNumbers,
+  sumDiceRolls,
 } from "@/lib/game/randomSettings";
 import type { ConfigInput } from "@/lib/game/validation";
 import styles from "@/styles/Home.module.css";
@@ -13,9 +11,15 @@ type DiceRoll = {
   value?: number | string;
 };
 
+type DiceRollGroup = {
+  value?: number | string;
+  rolls?: DiceRoll[];
+};
+
 type DiceBoxInstance = {
   init: () => Promise<DiceBoxInstance>;
   roll: (notation: string) => Promise<DiceRoll[]>;
+  getRollResults: () => DiceRollGroup[];
 };
 
 type DiceBoxConstructor = new (options: {
@@ -38,7 +42,7 @@ const rollFields: Array<{ key: RollKey; label: string }> = [
   { key: "cutOff", label: "無効にする出目" },
 ];
 
-const visualRollDurationMs = 2200;
+const visualRollDurationMs = 2400;
 
 export default function RandomConfigDiceRoller({
   values,
@@ -73,7 +77,7 @@ export default function RandomConfigDiceRoller({
             const box = new DiceBox({
               assetPath: "/assets/",
               container: `#${boxIds[key]}`,
-              scale: key === "cutOff" ? 9 : 7,
+              scale: 9,
               themeColor: key === "cutOff" ? "#ff7f6e" : "#00a9b7",
             });
             await box.init();
@@ -120,20 +124,17 @@ export default function RandomConfigDiceRoller({
 
     const startQty = pickWeightedValue(diceCountWeights);
     const addQty = pickWeightedValue(diceCountWeights);
-    const cutOffValue = pickWeightedValue(cutOffWeights);
-    const startTotal = sumNumbers(rollDiceValues(startQty));
-    const addTotal = sumNumbers(rollDiceValues(addQty));
 
     try {
-      await Promise.all([
+      const [startRolls, addRolls, cutOffRolls] = await Promise.all([
         rollForDisplay(startBox, `${startQty}d6`),
         rollForDisplay(addBox, `${addQty}d6`),
         rollForDisplay(cutOffBox, "1d6"),
       ]);
 
-      onConfigChange("startCups", String(startTotal));
-      onConfigChange("addPerRound", String(addTotal));
-      onConfigChange("cutOff", String(cutOffValue));
+      onConfigChange("startCups", String(Math.max(1, sumDiceRolls(startRolls))));
+      onConfigChange("addPerRound", String(Math.max(1, sumDiceRolls(addRolls))));
+      onConfigChange("cutOff", String(Math.max(1, sumDiceRolls(cutOffRolls))));
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Dice roll failed.");
     } finally {
@@ -169,12 +170,17 @@ export default function RandomConfigDiceRoller({
   );
 }
 
-function rollForDisplay(box: DiceBoxInstance, notation: string) {
+async function rollForDisplay(box: DiceBoxInstance, notation: string) {
   const rollPromise = box.roll(notation);
   rollPromise.catch(() => undefined);
-  return Promise.race([rollPromise, wait(visualRollDurationMs)]);
+  const result = await Promise.race([rollPromise, wait(visualRollDurationMs)]);
+  return Array.isArray(result) && result.length > 0 ? result : readRollsFromBox(box);
+}
+
+function readRollsFromBox(box: DiceBoxInstance) {
+  return box.getRollResults().flatMap((group) => group.rolls ?? [{ value: group.value }]);
 }
 
 function wait(ms: number) {
-  return new Promise((resolve) => window.setTimeout(resolve, ms));
+  return new Promise<null>((resolve) => window.setTimeout(() => resolve(null), ms));
 }

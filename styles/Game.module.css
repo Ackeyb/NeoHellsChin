@@ -202,10 +202,8 @@
 }
 
 .burstDie {
-  position: absolute;
-  left: calc(50% - 18px);
-  bottom: 18px;
-  z-index: 3;
+  position: fixed;
+  z-index: 30;
   display: grid;
   place-items: center;
   width: 36px;
@@ -217,6 +215,7 @@
   box-shadow: 0 8px 16px rgba(0, 169, 183, 0.22);
   font-weight: 900;
   pointer-events: none;
+  transform: translate3d(0, 0, 0);
   will-change: transform;
 }
 
@@ -253,7 +252,7 @@
     transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
   }
   100% {
-    transform: translate3d(-168px, -312px, 0) rotate(-560deg) scale(0.9);
+    transform: translate3d(-260px, -360px, 0) rotate(-620deg) scale(0.9);
   }
 }
 
@@ -262,7 +261,7 @@
     transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
   }
   100% {
-    transform: translate3d(232px, -352px, 0) rotate(760deg) scale(0.86);
+    transform: translate3d(310px, -410px, 0) rotate(840deg) scale(0.86);
   }
 }
 
@@ -271,10 +270,10 @@
     transform: translate3d(0, 0, 0) rotate(0deg) scale(1.04);
   }
   42% {
-    transform: translate3d(144px, -156px, 0) rotate(520deg) scale(1.02);
+    transform: translate3d(180px, -180px, 0) rotate(520deg) scale(1.02);
   }
   100% {
-    transform: translate3d(330px, -456px, 0) rotate(1180deg) scale(0.74);
+    transform: translate3d(420px, -520px, 0) rotate(1180deg) scale(0.74);
   }
 }
 

@@ -32,12 +32,14 @@ type BurstDie = {
   id: number;
   mode: RollMode;
   face: number;
+  startX: number;
+  startY: number;
 };
 
 const burstDurations: Record<RollMode, number> = {
-  gentle: 780,
-  normal: 860,
-  rough: 980,
+  gentle: 820,
+  normal: 920,
+  rough: 1080,
 };
 
 export default function DiceRoller({ disabled, playerName, rollMode, onRollResult }: DiceRollerProps) {
@@ -110,14 +112,21 @@ export default function DiceRoller({ disabled, playerName, rollMode, onRollResul
       setErrorMessage(error instanceof Error ? error.message : "Dice roll failed.");
     } finally {
       setIsRolling(false);
-      window.setTimeout(() => setBurstDie(null), 260);
+      window.setTimeout(() => setBurstDie(null), 220);
     }
   };
 
   const startBurstAnimation = async (mode: RollMode) => {
+    const viewportRect = viewportRef.current?.getBoundingClientRect();
     const id = burstCounterRef.current + 1;
     burstCounterRef.current = id;
-    setBurstDie({ id, mode, face: Math.floor(Math.random() * 6) + 1 });
+    setBurstDie({
+      id,
+      mode,
+      face: Math.floor(Math.random() * 6) + 1,
+      startX: viewportRect ? viewportRect.left + viewportRect.width / 2 - 18 : window.innerWidth / 2 - 18,
+      startY: viewportRect ? viewportRect.top + viewportRect.height / 2 - 18 : window.innerHeight / 2 - 18,
+    });
 
     await waitForFrame();
     await waitForFrame();
@@ -145,18 +154,18 @@ export default function DiceRoller({ disabled, playerName, rollMode, onRollResul
       }`}
       aria-label="Dice roller"
     >
-      <div ref={viewportRef} id={containerId} className={styles.diceBoxViewport}>
-        {burstDie && (
-          <div
-            key={burstDie.id}
-            ref={burstDieRef}
-            className={`${styles.burstDie} ${styles[`${burstDie.mode}Burst`]}`}
-            aria-hidden="true"
-          >
-            {burstDie.face}
-          </div>
-        )}
-      </div>
+      <div ref={viewportRef} id={containerId} className={styles.diceBoxViewport} />
+      {burstDie && (
+        <div
+          key={burstDie.id}
+          ref={burstDieRef}
+          className={`${styles.burstDie} ${styles[`${burstDie.mode}Burst`]}`}
+          style={{ left: burstDie.startX, top: burstDie.startY }}
+          aria-hidden="true"
+        >
+          {burstDie.face}
+        </div>
+      )}
       <div className={styles.rollSummary} aria-live="polite">
         {summary}
       </div>
