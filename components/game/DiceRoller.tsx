@@ -27,7 +27,7 @@ type DiceRollerProps = {
   playerName: string;
   rollMode: RollMode;
   onRollStart: (isBurst: boolean) => void;
-  onRollResult: (result: number) => void;
+  onRollResult: (result: number, meta?: { isChai?: boolean }) => void;
 };
 
 const burstSettleDelayMs: Record<RollMode, number> = {
@@ -111,7 +111,7 @@ export default function DiceRoller({
       setLastResult(result);
       setLastWasChai(isBurst);
       setLastRollPlayerName(playerName);
-      onRollResult(result);
+      onRollResult(result, { isChai: isBurst });
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Dice roll failed.");
     } finally {

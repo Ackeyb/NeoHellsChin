@@ -36,5 +36,25 @@ export default function useGameSounds() {
       audio.currentTime = 0;
       void audio.play();
     },
+    playAndWait(sound: GameSound) {
+      const audio = refs.current[sound];
+      if (!audio) return Promise.resolve();
+
+      return new Promise<void>((resolve) => {
+        let settled = false;
+        const finish = () => {
+          if (settled) return;
+          settled = true;
+          audio.removeEventListener("ended", finish);
+          audio.removeEventListener("error", finish);
+          resolve();
+        };
+
+        audio.addEventListener("ended", finish, { once: true });
+        audio.addEventListener("error", finish, { once: true });
+        audio.currentTime = 0;
+        void audio.play().catch(finish);
+      });
+    },
   };
 }

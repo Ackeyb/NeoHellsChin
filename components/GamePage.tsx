@@ -18,6 +18,8 @@ type GamePageProps = {
   mode: GameMode;
 };
 
+const aliveReviveCurseDuration = 5200;
+
 export default function GamePage({ mode }: GamePageProps) {
   const router = useRouter();
   const [gameState, setGameState] = useState<GameState | null>(null);
@@ -67,21 +69,26 @@ export default function GamePage({ mode }: GamePageProps) {
     }, delay);
   };
 
-  const handleResult = (result: number) => {
+  const handleResult = (result: number, meta?: { isChai?: boolean }) => {
     if (!gameState) return;
 
     const previousPlayer = getCurrentPlayer(gameState);
     const outcome = applyResult(gameState, result);
+    if (meta?.isChai && previousPlayer) {
+      const player = outcome.state.players.find((item) => item.id === previousPlayer.id);
+      if (player) player.displayResult = "チャイ";
+    }
     const nextPlayer = getCurrentPlayer(outcome.state);
     setGameState(outcome.state);
 
+    const isAliveRevive = outcome.sound === "123" && gameState.rule123?.type === "revive";
     if (outcome.sound === "123" && gameState.rule123?.type === "revive") {
       sounds.play("alive");
     } else if (outcome.sound) {
       sounds.play(outcome.sound);
     }
     const rollEffects: Array<{ effect: keyof EffectState; duration: number }> = [
-      { effect: "curse", duration: 2800 },
+      { effect: "curse", duration: isAliveRevive ? aliveReviveCurseDuration : 2800 },
       { effect: "happy", duration: 2200 },
       { effect: "happier", duration: 2600 },
       { effect: "happiest", duration: 3200 },
@@ -136,9 +143,9 @@ export default function GamePage({ mode }: GamePageProps) {
         disabled={isUiLocked}
         gameOver={gameState.gameOver}
         onBackToSettings={() => setShowBackDialog(true)}
-        onPlayAgain={() => {
-          sounds.play("stay");
-          window.setTimeout(() => router.reload(), 180);
+        onPlayAgain={async () => {
+          await sounds.playAndWait("stay");
+          router.reload();
         }}
       />
       <GameEffects effects={effects} turnName={turnCutInName} />
